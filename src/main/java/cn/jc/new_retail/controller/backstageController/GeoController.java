@@ -75,6 +75,7 @@ public class GeoController {
         for (StoreDto dto : list) {
             System.out.println(dto.getStore()+dto.getDistance());
             System.out.println("put测试");
+            System.out.println("put第二次上传测试");
         }
 
         return list;
