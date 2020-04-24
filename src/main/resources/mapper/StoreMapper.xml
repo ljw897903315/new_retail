@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.jc.new_retail.mapper.StoreMapper">
+
+    <resultMap id="StoreMap" type="cn.jc.new_retail.entity.Store">
+        <id column="store_id" jdbcType="VARCHAR" property="storeId" />
+        <result column="store_name" jdbcType="VARCHAR" property="storeName" />
+        <result column="store_address" jdbcType="VARCHAR" property="storeAddress" />
+        <result column="store_longitude" jdbcType="DOUBLE" property="storeLongitude" />
+        <result column="store_latitude" jdbcType="DOUBLE" property="storeLatitude" />
+        <result column="store_address_detail" jdbcType="VARCHAR" property="storeAddressDetail" />
+        <result column="store_phone" jdbcType="VARCHAR" property="storePhone" />
+        <result column="store_login_name" jdbcType="VARCHAR" property="storeLoginName" />
+        <result column="store_password" jdbcType="VARCHAR" property="storePassword" />
+        <result column="store_admin_id" jdbcType="VARCHAR" property="storeAdminId" />
+        <result column="admin_name" jdbcType="VARCHAR" property="adminName" />
+        <result column="admin_phone" jdbcType="VARCHAR" property="adminPhone" />
+        <result column="state" jdbcType="VARCHAR" property="state" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="is_enable" jdbcType="TINYINT" property="isEnable" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    store_id,store_name,store_address,store_longitude,store_latitude,store_address_detail,store_phone,store_login_name,store_password,
+    store_admin_id,admin_name,admin_phone,state,create_time,creator,is_enable,is_delete
+  </sql>
+
+    <!-- 查询全部门店-->
+    <select id="listStore"  resultMap="StoreMap" >
+        select
+        <include refid="Base_Column_List" />
+        from t_store
+        where is_delete = 0
+        <if test="storeName != null and storeName !=''">
+            and store_name LIKE concat('%',#{storeName,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+<!--    编辑门店信息-->
+    <update id="updateStore" parameterType="cn.jc.new_retail.entity.Store">
+        update t_store
+        <set>
+            <if test="storeName != null and storeName != '' ">
+                store_name = #{storeName,jdbcType=VARCHAR},
+            </if>
+            <if test="storeAddress != null and storeAddress != '' ">
+                store_address = #{storeAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="storeLongitude != null and storeLongitude != '' ">
+                store_longitude = #{storeLongitude,jdbcType=VARCHAR},
+            </if>
+            <if test="storeLatitude != null and storeLatitude != '' ">
+                store_latitude = #{storeLatitude,jdbcType=VARCHAR},
+            </if>
+            <if test="storeAddressDetail != null and storeAddressDetail != '' ">
+                store_address_detail = #{storeAddressDetail,jdbcType=VARCHAR},
+            </if>
+            <if test="storePhone != null and storePhone != '' ">
+                store_phone = #{storePhone,jdbcType=VARCHAR},
+            </if>
+            <if test="storeLoginName != null and storeLoginName != '' ">
+                store_login_name = #{storeLoginName,jdbcType=VARCHAR},
+            </if>
+            <if test="storePassword != null and storePassword != '' ">
+                store_password = #{storePassword,jdbcType=VARCHAR},
+            </if>
+            <if test="storeAdminId != null and storeAdminId != '' ">
+                store_admin_id = #{storeAdminId,jdbcType=VARCHAR},
+            </if>
+            <if test="adminName != null and adminName != '' ">
+                admin_name = #{adminName,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPhone != null and adminPhone != '' ">
+                admin_phone = #{adminPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null and state != '' ">
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creator != null and creator != '' ">
+                creator = #{creator,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where store_id = #{storeId ,jdbcType=VARCHAR}
+    </update>
+
+<!--    启用关闭门店-->
+    <update id="enableStore" >
+        update t_store
+        <set>
+            is_enable = #{isEnable,jdbcType=TINYINT}
+            where store_id = #{storeId,jdbcType=VARCHAR}
+        </set>
+    </update>
+
+<!--根据门店id查询门店管理员信息-->
+    <select id="loadStoreAdmin" resultMap="StoreMap">
+        select
+        store_admin_id,admin_name
+        from t_store
+        where store_id = #{storeId ,jdbcType=VARCHAR}
+    </select>
+
+<!--删除门店-->
+    <update id="deleteStore" >
+        update t_store
+        <set>
+            is_delete = 1
+            where store_id = #{storeId,jdbcType=VARCHAR}
+        </set>
+    </update>
+
+<!--添加门店-->
+    <insert id="addStore" parameterType="cn.jc.new_retail.entity.Store">
+    insert into t_store (store_id,store_name,store_address,store_longitude,store_latitude,store_address_detail,store_phone,
+    store_login_name,store_password,
+    store_admin_id,admin_name,admin_phone,state,create_time,creator)
+    values (#{storeId,jdbcType=VARCHAR}, #{storeName,jdbcType=VARCHAR}, #{storeAddress,jdbcType=VARCHAR},
+    #{storeLongitude,jdbcType=DOUBLE},#{storeLatitude,jdbcType=VARCHAR}, #{storeAddressDetail,jdbcType=VARCHAR},#{storePhone,jdbcType=VARCHAR},
+    #{storeLoginName,jdbcType=DOUBLE},#{storePassword,jdbcType=VARCHAR},
+    #{storeAdminId,jdbcType=VARCHAR}, #{adminName,jdbcType=VARCHAR},
+    #{adminPhone,jdbcType=VARCHAR},#{state,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP},#{creator,jdbcType=VARCHAR})
+  </insert>
+
+
+
+</mapper>

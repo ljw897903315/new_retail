@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.jc.new_retail.mapper.AdvertMapper">
+
+    <resultMap id="AdvertMap" type="cn.jc.new_retail.entity.Advert">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="title" jdbcType="VARCHAR" property="advertTitle" />
+        <result column="img_url" jdbcType="VARCHAR" property="advertImgUrl" />
+        <result column="creat_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="sort_time" jdbcType="TIMESTAMP" property="sortTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id,title,img_url,creat_time,sort_time,is_delete
+  </sql>
+    <!-- 查询全部-->
+    <select id="listAdvert"  resultMap="AdvertMap" >
+        select
+        <include refid="Base_Column_List" />
+        from t_advert
+        where is_delete = 0
+    </select>
+
+    <!-- 添加轮播图   -->
+    <insert id="saveAdvert" parameterType="cn.jc.new_retail.entity.Advert">
+    insert into t_advert (id,title,img_url,creat_time,sort_time)
+    values (#{id,jdbcType=VARCHAR}, #{advertTitle,jdbcType=VARCHAR}, #{advertImgUrl,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP},#{sortTime,jdbcType=TIMESTAMP})
+  </insert>
+
+<!--    修改轮播图-->
+    <update id="updateAdvert" parameterType="cn.jc.new_retail.entity.Advert">
+        update t_advert
+        <set>
+            <if test="advertTitle != null and advertTitle != '' ">
+                title = #{advertTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="advertImgUrl != null and advertImgUrl != '' ">
+                img_url = #{advertImgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                creat_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="sortTime != null">
+                sort_time = #{sortTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id ,jdbcType=VARCHAR}
+    </update>
+
+<!--删除轮播图-->
+    <update id="removeAdvert" parameterType="String">
+        update t_advert
+        <set>
+            is_delete = 1
+            where id = #{id,jdbcType=VARCHAR}
+        </set>
+    </update>
+
+
+
+    <!-- 实现交换两条记录的的数据,上下移动排序   -->
+<update id="sortAdvert" >
+    update t_advert set
+      sort_time = #{date}
+      where id=#{id}
+</update>
+
+
+</mapper>

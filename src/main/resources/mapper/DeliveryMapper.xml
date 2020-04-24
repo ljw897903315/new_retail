@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.jc.new_retail.mapper.DeliveryMapper">
+
+    <resultMap id="DeliveryMap" type="cn.jc.new_retail.entity.Delivery">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="region" jdbcType="VARCHAR" property="region" />
+        <result column="freight" jdbcType="DOUBLE" property="freight" />
+        <result column="discount" jdbcType="DOUBLE" property="discount" />
+        <result column="state" jdbcType="TINYINT" property="state" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+    id,region,freight,discount,state,is_delete
+  </sql>
+
+    <!-- 查询全部配送信息-->
+    <select id="listDelivery"  resultMap="DeliveryMap" >
+        select
+        <include refid="Base_Column_List" />
+        from t_delivery
+        where is_delete = 0
+        <if test="region != null and region !=''">
+            and region LIKE concat('%',#{region,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+<!--    添加配送信息-->
+    <insert id="insertDelivery" parameterType="cn.jc.new_retail.entity.Delivery">
+    insert into t_delivery (id,region,freight,discount)
+    values (#{id,jdbcType=VARCHAR}, #{region,jdbcType=VARCHAR}, #{freight,jdbcType=DOUBLE},
+    #{discount,jdbcType=DOUBLE})
+  </insert>
+
+<!--修改配送信息-->
+    <update id="updateDelivery" parameterType="cn.jc.new_retail.entity.Delivery">
+        update t_delivery
+        <set>
+            <if test="region != null and region != '' ">
+                region = #{region,jdbcType=VARCHAR},
+            </if>
+            <if test="freight != null ">
+                freight = #{freight,jdbcType=DOUBLE},
+            </if>
+            <if test="discount != null ">
+                discount = #{discount,jdbcType=DOUBLE},
+            </if>
+        </set>
+        where id = #{id ,jdbcType=VARCHAR}
+    </update>
+
+<!--删除配送信息-->
+    <update id="deleteDelivery" >
+        update t_delivery
+        <set>
+            is_delete = 1
+            where id = #{id,jdbcType=VARCHAR}
+        </set>
+    </update>
+
+</mapper>
